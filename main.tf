@@ -41,28 +41,59 @@ resource "aws_security_group" "k8s_security_group" {
   }
 }
 
-# Define the EC2 instance
-resource "aws_instance" "k8s_instance" {
+
+# Define the EC2 master instance
+resource "aws_instance" "k8s_master_instance" {
   ami           = "ami-007855ac798b5175e"
+  instance_type = "t2.micro"
+  key_name      = "abhinew"
+  subnet_id     = aws_subnet.k8s_private_subnet.id
+  vpc_security_group_ids = [aws_security_group.k8s_security_group.id]
+
+
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y docker.io
+    usermod -aG docker ubuntu
+    systemctl enable docker
+    systemctl start docker
+    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    apt update -y
+    apt install kubeadm=1.20.0-00 kubectl=1.20.0-00 kubelet=1.20.0-00 -y
+    kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU
+    mkdir -p $HOME/.kube
+    cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    EOF
+}
+
+
+# Define the EC2 worker instance
+resource "aws_instance" "k8s_instance" {
+  ami           = "ami-007855ac798b5175e" 
   instance_type = "t2.micro"
   key_name      = "abhinew"
   subnet_id     = aws_subnet.k8s_public_subnet.id
   vpc_security_group_ids = [aws_security_group.k8s_security_group.id]
+  
 
-connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file("C:/Users/Office/Desktop/abhinew")
-    host        = self.public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y docker.io",
-      "sudo usermod -aG docker ubuntu",
-      "sudo systemctl enable docker",
-      "sudo systemctl start docker"
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y docker.io
+    usermod -aG docker ubuntu
+    systemctl enable docker
+    systemctl start docker
+    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    apt update -y
+    apt install kubeadm=1.20.0-00 kubectl=1.20.0-00 kubelet=1.20.0-00 -y
+    kubeadm reset --force
+    EOF
+}
 
     ]
   }
