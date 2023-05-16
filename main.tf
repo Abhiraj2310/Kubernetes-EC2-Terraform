@@ -1,7 +1,7 @@
 # Define the AWS provider
 provider "aws" {
-  access_key = "<AKIA2H36PBWVVAB24IWK>"
-  secret_key = "<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>"
+  access_key = "AKIA2H36PBWVVAB24IWK"
+  secret_key = "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"
   region     = "us-east-1"
 }
 
@@ -43,11 +43,18 @@ resource "aws_security_group" "k8s_security_group" {
 
 # Define the EC2 instance
 resource "aws_instance" "k8s_instance" {
-  ami           = "ami-007855ac798b5175e" 
+  ami           = "ami-007855ac798b5175e"
   instance_type = "t2.micro"
-  key_name      = "abhinew.pem"
+  key_name      = "abhinew"
   subnet_id     = aws_subnet.k8s_public_subnet.id
   vpc_security_group_ids = [aws_security_group.k8s_security_group.id]
+
+connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("C:/Users/Office/Desktop/abhinew")
+    host        = self.public_ip
+  }
 
   provisioner "remote-exec" {
     inline = [
@@ -56,10 +63,9 @@ resource "aws_instance" "k8s_instance" {
       "sudo usermod -aG docker ubuntu",
       "sudo systemctl enable docker",
       "sudo systemctl start docker"
-      
+
     ]
   }
 }
-
 
 
