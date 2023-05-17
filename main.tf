@@ -45,7 +45,7 @@ resource "aws_security_group" "k8s_security_group" {
 # Define the EC2 master instance
 resource "aws_instance" "k8s_master_instance" {
   ami           = "ami-007855ac798b5175e"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   key_name      = "abhinew"
   subnet_id     = aws_subnet.k8s_private_subnet.id
   vpc_security_group_ids = [aws_security_group.k8s_security_group.id]
@@ -93,10 +93,6 @@ resource "aws_instance" "k8s_instance" {
     apt install kubeadm=1.20.0-00 kubectl=1.20.0-00 kubelet=1.20.0-00 -y
     kubeadm reset --force
     EOF
-}
-
-    ]
-  }
 }
 
 
