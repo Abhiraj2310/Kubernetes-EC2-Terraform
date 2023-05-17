@@ -1,7 +1,7 @@
 # Define the AWS provider
 provider "aws" {
-  access_key = "AKIA2H36PBWVVAB24IWK"
-  secret_key = "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"
+  access_key = "****"
+  secret_key = "****"
   region     = "us-east-1"
 }
 
