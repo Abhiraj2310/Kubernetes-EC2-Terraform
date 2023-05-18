@@ -4,13 +4,11 @@ This project provides a Terraform configuration to deploy a Kubernetes cluster o
 
 ## Prerequisites
 
-Before you begin, ensure you have the following prerequisites installed:
+Before you begin, ensure you have the following prerequisites:
 
-- [Terraform](https://www.terraform.io/downloads.html) (version >= 0.12)
+- [Terraform](https://www.terraform.io/downloads.html) (version >= 0.12) installed on your Local machine.
 
-- [AWS CLI](https://aws.amazon.com/cli/) configured with your AWS credentials
-
-- [kubectl](https://kubernetes.io/docs/tasks/tools/) (optional, for interacting with the Kubernetes cluster)
+- [AWS Account](https://aws.amazon.com/console.html) An AWS account
 
 ## Getting Started
 
@@ -40,7 +38,7 @@ To get started with this project, follow these steps:
 
    ```
 
-4. Modify the `terraform.tfvars` file to customize the cluster configuration. You can adjust the number of worker nodes, EC2 instance types, region, etc. according to your requirements.
+4. Modify the  file to customize the cluster configuration. You can adjust the number of worker nodes, EC2 instance types, region, etc. according to your requirements.
 
 5. Review the Terraform plan to ensure everything looks correct:
 
@@ -62,17 +60,6 @@ To get started with this project, follow these steps:
 
 7. Once the deployment is complete, you will see the outputs with information about the cluster, such as the cluster endpoint, worker node details, and kubeconfig file location.
 
-8. (Optional) Configure `kubectl` to interact with the newly created Kubernetes cluster. If you already have `kubectl` installed, you can update your kubeconfig file by running the following command:
-
-   ```shell
-
-   aws eks update-kubeconfig --name <cluster-name> --region <region>
-
-   ```
-
-   Replace `<cluster-name>` with the name of your cluster and `<region>` with the AWS region where the cluster was created.
-
-9. You can now use `kubectl` commands to manage and interact with your Kubernetes cluster.
 
 ## Cleaning Up
 
@@ -90,9 +77,6 @@ terraform destroy
 
 If you'd like to contribute to this project, please follow the guidelines outlined in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
